@@ -18,11 +18,11 @@
     "commands": [
       {
         "command": "markdownEdition.showPreview",
-        "title": "Markdown: Show Preview"
+        "title": "Pubs: Show Preview"
       },
       {
         "command": "markdownEdition.selectEdition",
-        "title": "Markdown: Select Edition"
+        "title": "Pubs: Select Edition"
       }
     ]
   },
@@ -30,11 +30,13 @@
     "compile": "tsc -p ./",
     "vscode:prepublish": "npm run compile"
   },
+  "dependencies": {
+    "markdown-it": "^14.1.0"
+  },
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.16.0",
     "@types/vscode": "^1.108.0",
-    "markdown-it": "^14.1.0",
     "typescript": "^5.3.0"
   }
 }
