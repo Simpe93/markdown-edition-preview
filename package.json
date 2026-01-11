@@ -1,0 +1,40 @@
+{
+  "name": "markdown-edition-preview",
+  "displayName": "Markdown Edition Preview",
+  "description": "Custom markdown preview with edition selector",
+  "version": "1.0.0",
+  "publisher": "Simpe93",
+  "engines": {
+    "vscode": "^1.108.0"
+  },
+  "categories": [
+    "Markdown"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "markdownEdition.showPreview",
+        "title": "Markdown: Show Preview"
+      },
+      {
+        "command": "markdownEdition.selectEdition",
+        "title": "Markdown: Select Edition"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^22.16.0",
+    "@types/vscode": "^1.108.0",
+    "markdown-it": "^14.1.0",
+    "typescript": "^5.3.0"
+  }
+}
