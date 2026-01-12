@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "publisher": "Simpe93",
   "engines": {
-    "vscode": "^1.108.0"
+    "vscode": "^1.86.0"
   },
   "categories": [
     "Markdown"
@@ -36,7 +36,7 @@
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.16.0",
-    "@types/vscode": "^1.108.0",
+    "@types/vscode": "^1.86.0",
     "typescript": "^5.3.0"
   }
 }
