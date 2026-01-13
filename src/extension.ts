@@ -4,14 +4,39 @@ import MarkdownIt from "markdown-it";
 let currentEdition = "Se";
 let extensionContext: vscode.ExtensionContext;
 let panel: vscode.WebviewPanel | undefined;
+let statusBar: vscode.StatusBarItem | undefined;
+let lastMarkdownDocument: vscode.TextDocument | undefined;
+
+function updateStatusBar() {
+  const editor = vscode.window.activeTextEditor;
+
+  if (statusBar) {
+    if (editor && editor.document.languageId === "markdown") {
+      statusBar.text = `Edition: ${currentEdition}`;
+      statusBar.show();
+    } else {
+      statusBar.hide();
+    }
+  }
+}
+
+function updatePreviewTitle() {
+  if (!panel || !lastMarkdownDocument) {
+    return;
+  }
+
+  const fileName = lastMarkdownDocument.isUntitled
+    ? "Untitled"
+    : lastMarkdownDocument.uri.path.split("/").pop() ?? "Untitled";
+
+  panel.title = `Preview (${currentEdition}) — ${fileName}`;
+}
 
 export function activate(context: vscode.ExtensionContext) {
   extensionContext = context;
 
-  const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+  statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
   statusBar.command = "markdownEdition.selectEdition";
-  statusBar.text = `Edition: ${currentEdition}`;
-  statusBar.show();
   context.subscriptions.push(statusBar);
 
   context.subscriptions.push(
@@ -25,10 +50,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       currentEdition = pick;
-      statusBar.text = `Edition: ${currentEdition}`;
 
+      updateStatusBar();
       ensurePreview();
       updatePreview();
+      updatePreviewTitle();
     })
   );
 
@@ -47,11 +73,26 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
+      updateStatusBar();
+
+      if (editor?.document.languageId === "markdown") {
+        lastMarkdownDocument = editor.document;
+        updatePreview(editor.document);
+        updatePreviewTitle();
+      }
+    })
+  );
+
+  updateStatusBar();
 }
 
 function ensurePreview() {
   if (panel) {
     panel.reveal(vscode.ViewColumn.Beside);
+    updatePreviewTitle();
     return;
   }
 
@@ -61,6 +102,8 @@ function ensurePreview() {
   panel.onDidDispose(() => {
     panel = undefined;
   });
+
+  updatePreviewTitle();
 }
 
 function updatePreview(doc?: vscode.TextDocument) {
@@ -68,8 +111,7 @@ function updatePreview(doc?: vscode.TextDocument) {
     return;
   }
 
-  const editor = vscode.window.activeTextEditor;
-  const document = doc ?? editor?.document;
+  const document = doc ?? lastMarkdownDocument;
   if (!document) {
     return;
   }
@@ -111,11 +153,11 @@ function filterByEdition(input: string, edition: string): string {
   let include = true;
 
   for (const line of lines) {
-    const startMatch = line.match(/^<!--\s*Config\s*=\s*([A-Za-z0-9_|-]+)\s*-->$/);
-    const stopMatch = line.match(/^<!--\s*Config\s*-->$/);
+    const startMatch = line.match(/^<!--\s*if:\s*([A-Za-z0-9_-]+(?:\s+or\s+[A-Za-z0-9_-]+)*)\s*-->$/);
+    const stopMatch = line.match(/^<!--\s*endif\s*-->$/);
 
     if (startMatch) {
-      allowedEditions = startMatch[1].split("|");
+      allowedEditions = startMatch[1].split(/\s+or\s+/).map(s => s.trim());
       include = allowedEditions.includes(edition);
       continue;
     }

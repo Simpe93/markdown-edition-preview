@@ -8,13 +8,13 @@ A VS Code extension that allows you to preview Markdown files for different
 - Status bar edition selector
 
 ## Syntax
-<!--Config=Test1|Test2-->
+<!-- if: Test1 or Test2 -->
 This content is only visible for Test1 and Test2
-<!--Config-->
+<!-- endif -->
 
-<!--Config=Test3-->
+<!-- if: Test3 -->
 This is only visible for Test3
-<!--Config-->
+<!-- endif -->
 
 ## Build
 1. Clone the repo
