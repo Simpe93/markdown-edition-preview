@@ -97,13 +97,65 @@ function ensurePreview() {
   }
 
   panel = vscode.window.createWebviewPanel("markdownEditionPreview", "Edition Preview",
-    vscode.ViewColumn.Beside, { enableScripts: true });
+    vscode.ViewColumn.Beside, {
+      enableScripts: true,
+      localResourceRoots: [
+        vscode.workspace.workspaceFolders?.[0].uri ?? extensionContext.extensionUri
+      ]
+    }
+  );
 
   panel.onDidDispose(() => {
     panel = undefined;
   });
 
   updatePreviewTitle();
+}
+
+function createMarkdownIt(webview: vscode.Webview, doc: vscode.TextDocument) {
+  const md = new MarkdownIt({
+    html: true,
+    linkify: true,
+    typographer: true,
+  }).use(require("markdown-it-task-lists"))
+    .use(require("markdown-it-footnote"));
+
+  const defaultImageRenderer = md.renderer.rules.image ||
+    function (tokens, idx, options, env, self) {
+      return self.renderToken(tokens, idx, options);
+    };
+
+  md.renderer.rules.image = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    const srcIndex = token.attrIndex("src");
+
+    if (srcIndex >= 0) {
+      const src = token.attrs![srcIndex][1];
+
+      // Only rewrite relative paths
+      if (!src.startsWith("http") && !src.startsWith("data:")) {
+        const imageUri = vscode.Uri.joinPath(doc.uri, "..", src);
+        token.attrs![srcIndex][1] = webview.asWebviewUri(imageUri).toString();
+      }
+    }
+
+    return defaultImageRenderer(tokens, idx, options, env, self);
+  };
+
+  return md;
+}
+
+function stripYamlFrontMatter(input: string): string {
+  if (!input.startsWith("---")) {
+    return input;
+  }
+
+  const end = input.indexOf("\n---", 3);
+  if (end === -1) {
+    return input;
+  }
+
+  return input.slice(end + 4).replace(/^\s+/, "");
 }
 
 function updatePreview(doc?: vscode.TextDocument) {
@@ -116,8 +168,10 @@ function updatePreview(doc?: vscode.TextDocument) {
     return;
   }
 
-  const md = new MarkdownIt();
-  const filtered = filterByEdition(document.getText(), currentEdition);
+  const md = createMarkdownIt(panel.webview, document);
+  const raw = document.getText();
+  const noFrontMatter = stripYamlFrontMatter(raw);
+  const filtered = filterByEdition(noFrontMatter, currentEdition);
 
   const cssUri = panel.webview.asWebviewUri(
     vscode.Uri.joinPath(extensionContext.extensionUri, "media", "markdown.css")
@@ -145,7 +199,7 @@ function updatePreview(doc?: vscode.TextDocument) {
   `;
 }
 
-function filterByEdition(input: string, edition: string): string {
+function filterBlockByEdition(input: string, edition: string): string {
   const lines = input.split(/\r?\n/);
   const output: string[] = [];
 
@@ -174,6 +228,22 @@ function filterByEdition(input: string, edition: string): string {
   }
 
   return output.join("\n");
+}
+
+function filterInlineByEdition(input: string, edition: string): string {
+  const inlineIfRegex =
+    /<!--\s*if-inline:\s*([A-Za-z0-9_-]+(?:\s+or\s+[A-Za-z0-9_-]+)*)\s*-->([\s\S]*?)<!--\s*endif-inline\s*-->/g;
+
+  return input.replace(inlineIfRegex, (_, editionsRaw, content) => {
+    const allowedEditions = editionsRaw.split(/\s+or\s+/).map((s: string) => s.trim());
+    return allowedEditions.includes(edition) ? content : "";
+  });
+}
+
+function filterByEdition(input: string, edition: string): string {
+  const blockFiltered = filterBlockByEdition(input, edition);
+  const inlineFiltered = filterInlineByEdition(blockFiltered, edition);
+  return inlineFiltered;
 }
 
 export function deactivate() {}

@@ -1,3 +1,11 @@
+---
+title: My Doc
+edition: Test1
+tags:
+  - intro
+  - api
+---
+
 # Markdown Edition Preview
 A VS Code extension that allows you to preview Markdown files for different
 **editions** using special comment blocks.
@@ -15,6 +23,8 @@ This content is only visible for Test1 and Test2
 <!-- if: Test3 -->
 This is only visible for Test3
 <!-- endif -->
+
+This is a longer text which contains the supported <!-- if-inline: Test1 --> inline <!-- endif-inline --> syntax. It can occur multiple inline sections <!-- if-inline: Test2 --> in <!-- endif-inline --> the same row.  
 
 ## Build
 1. Clone the repo

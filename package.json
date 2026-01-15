@@ -2,7 +2,7 @@
   "name": "markdown-edition-preview",
   "displayName": "Markdown Edition Preview",
   "description": "Custom markdown preview with edition selector",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "Simpe93",
   "engines": {
     "vscode": "^1.86.0"
@@ -31,7 +31,9 @@
     "vscode:prepublish": "npm run compile"
   },
   "dependencies": {
-    "markdown-it": "^14.1.0"
+    "markdown-it": "^14.1.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "markdown-it-footnote": "^3.0.3"
   },
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",
