@@ -2,7 +2,7 @@
   "name": "markdown-edition-preview",
   "displayName": "Markdown Edition Preview",
   "description": "Custom markdown preview with edition selector",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "Simpe93",
   "engines": {
     "vscode": "^1.86.0"

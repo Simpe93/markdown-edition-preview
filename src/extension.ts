@@ -86,6 +86,24 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
+  context.subscriptions.push(
+    vscode.window.onDidChangeTextEditorVisibleRanges(event => {
+      if (!panel) {
+        return;
+      }
+    
+      if (event.textEditor.document !== lastMarkdownDocument) {
+        return;
+      }
+
+      const topLine = event.visibleRanges[0].start.line;
+      panel.webview.postMessage({
+        type: 'revealLine',
+        line: topLine
+      });
+    })
+  );
+
   updateStatusBar();
 }
 
@@ -142,6 +160,22 @@ function createMarkdownIt(webview: vscode.Webview, doc: vscode.TextDocument) {
     return defaultImageRenderer(tokens, idx, options, env, self);
   };
 
+  md.renderer.rules.paragraph_open = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    if (token.map) {
+      token.attrSet("data-line", token.map[0].toString());
+    }
+    return self.renderToken(tokens, idx, options);
+  };
+
+  md.renderer.rules.heading_open = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    if (token.map) {
+      token.attrSet("data-line", token.map[0].toString());
+    }
+    return self.renderToken(tokens, idx, options);
+  };
+
   return md;
 }
 
@@ -194,6 +228,18 @@ function updatePreview(doc?: vscode.TextDocument) {
       </head>
       <body>
         ${md.render(filtered)}
+        <script>
+          window.addEventListener('message', event => {
+            const { type, line } = event.data;
+            if (type !== 'revealLine') {
+              return;
+            }
+            const element = document.querySelector('[data-line="' + line + '"]');
+            if (element) {
+              element.scrollIntoView({ block: 'start', behavior: 'auto' });
+            }
+          });
+        </script>
       </body>
     </html>
   `;
