@@ -40,6 +40,8 @@ const tableView = document.getElementById("tableView");
 const treeView = document.getElementById("treeView");
 const tableBody = document.getElementById("tableBody");
 
+const columnsDropdown = document.getElementById("columnsDropdown");
+
 const tableViewBtn = document.getElementById("tableViewBtn");
 const treeViewBtn = document.getElementById("treeViewBtn");
 
@@ -48,6 +50,8 @@ const clearSearchBtn = document.getElementById("clearSearch");
 
 const expandAllBtn = document.getElementById("expandAllBtn");
 const collapseAllBtn = document.getElementById("collapseAllBtn");
+
+const treeLevelControls = document.getElementById("treeLevelControls");
 
 const emptyState = document.getElementById("emptyState");
 
@@ -233,7 +237,7 @@ deleteSelectedBtn.addEventListener("click", () => {
   if (count === 0) return;
 
   const confirmed = confirm(
-    `Are you sure you want to delete ${count} selected entries?`
+    `Are you sure you want to delete ${count} selected sorties?`
   );
 
   if (!confirmed) return;
@@ -391,12 +395,15 @@ function renderActiveFilterPills() {
 
     const remove = document.createElement("button");
     remove.type = "button";
-    remove.textContent = "×";
     remove.title = "Remove filter";
     remove.setAttribute(
       "aria-label",
       `Remove ${pill.label} filter`
     );
+
+    const icon = document.createElement("i");
+    icon.classList.add("fas", "fa-times");
+    remove.appendChild(icon);
 
     remove.addEventListener("click", () => {
 
@@ -1040,7 +1047,7 @@ function createGroup({
   heading.className = `tree-heading ${level}`;
 
   heading.innerHTML = `
-    <span class="chevron">▼</span>
+    <i class="fas fa-caret-down"></i>
     <span class="group-title">${escapeHTML(title)}</span>
     <span class="group-count">${count}</span>
   `;
@@ -1283,15 +1290,23 @@ collapseAllBtn.addEventListener("click", () => {
 // New 1
 
 const treeSortBtn = document.getElementById("treeSortBtn");
+const treeSortBtnLabel = document.getElementById("treeSortBtnLabel");
+const treeSortBtnIcon = document.getElementById("treeSortBtnIcon");
 
 treeSortBtn.addEventListener("click", () => {
   treeSortDirection =
     treeSortDirection === "desc" ? "asc" : "desc";
 
-  treeSortBtn.textContent =
+  treeSortBtnLabel.textContent =
     treeSortDirection === "desc"
-      ? "↓ Newest first"
-      : "↑ Oldest first";
+      ? "Newest first"
+      : "Oldest first";
+  
+  if (treeSortDirection === "desc") {
+    treeSortBtnIcon.classList.replace("fa-long-arrow-alt-up", "fa-long-arrow-alt-down");
+  } else {
+    treeSortBtnIcon.classList.replace("fa-long-arrow-alt-down", "fa-long-arrow-alt-up");
+  }
 
   renderTree();
 });
@@ -1303,6 +1318,15 @@ monthToggle.addEventListener("click", () => {
 
   monthToggle.classList.toggle("active", showMonth);
 
+  if (showMonth && showWeek) {
+    document.documentElement.style.setProperty('--tree-indent', '78px');
+  } else if (showMonth && !showWeek) {
+    document.documentElement.style.setProperty('--tree-indent', '48px');
+  } else if (!showMonth && showWeek) {
+    document.documentElement.style.setProperty('--tree-indent', '48px');
+  } else {
+    document.documentElement.style.setProperty('--tree-indent', '18px');
+  }
   renderTree();
 });
 
@@ -1311,6 +1335,15 @@ weekToggle.addEventListener("click", () => {
 
   weekToggle.classList.toggle("active", showWeek);
 
+  if (showMonth && showWeek) {
+    document.documentElement.style.setProperty('--tree-indent', '98px');
+  } else if (showMonth && !showWeek) {
+    document.documentElement.style.setProperty('--tree-indent', '68px');
+  } else if (!showMonth && showWeek) {
+    document.documentElement.style.setProperty('--tree-indent', '68px');
+  } else {
+    document.documentElement.style.setProperty('--tree-indent', '38px');
+  }
   renderTree();
 });
 
@@ -1331,6 +1364,11 @@ function setView(view) {
 
   expandAllBtn.hidden = isTable;
   collapseAllBtn.hidden = isTable;
+
+  treeLevelControls.hidden = isTable;
+  treeSortBtn.hidden = isTable;
+
+  columnsDropdown.hidden = !isTable;
 
   paginationControls.hidden = !isTable;
 
@@ -1425,10 +1463,34 @@ function renderPagination(totalEntries, totalPages) {
   );
 
   recordCount.textContent =
-    `Showing ${start}–${end} of ${totalEntries} entries`;
+    `Showing ${start}-${end} of ${totalEntries} sorties`;
 
   // Helper for creating navigation buttons
-  function addButton(label, targetPage, disabled = false, active = false) {
+  function addNavButton(label, targetPage, disabled = false, active = false) {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.disabled = disabled;
+
+    const icon = document.createElement("i");
+    icon.classList.add("fas", label);
+    button.appendChild(icon);
+
+    if (active) {
+      button.classList.add("active");
+      button.setAttribute("aria-current", "page");
+    }
+
+    button.addEventListener("click", () => {
+      currentPage = targetPage;
+      renderTable();
+    });
+
+    pagination.appendChild(button);
+  }
+  
+  // Helper for creating page buttons
+  function addPageButton(label, targetPage, disabled = false, active = false) {
     const button = document.createElement("button");
 
     button.type = "button";
@@ -1449,10 +1511,10 @@ function renderPagination(totalEntries, totalPages) {
   }
 
   // First page
-  addButton("«", 1, currentPage === 1);
+  addNavButton("fa-angle-double-left", 1, currentPage === 1);
 
   // Previous page
-  addButton("‹", currentPage - 1, currentPage === 1);
+  addNavButton("fa-angle-left", currentPage - 1, currentPage === 1);
 
   // Calculate visible page numbers
   const maxVisiblePages = 5;
@@ -1471,7 +1533,7 @@ function renderPagination(totalEntries, totalPages) {
 
   // Page numbers
   for (let page = startPage; page <= endPage; page++) {
-    addButton(
+    addPageButton(
       page,
       page,
       false,
@@ -1480,15 +1542,15 @@ function renderPagination(totalEntries, totalPages) {
   }
 
   // Next page
-  addButton(
-    "›",
+  addNavButton(
+    "fa-angle-right",
     currentPage + 1,
     currentPage === totalPages
   );
 
   // Last page
-  addButton(
-    "»",
+  addNavButton(
+    "fa-angle-double-right",
     totalPages,
     currentPage === totalPages
   );
@@ -1515,11 +1577,11 @@ pageSizeSelect.addEventListener("change", event => {
 ======================================== */
 
 function updateCounts(count) {
-  headerCount.textContent = `${count} entries`;
+  headerCount.textContent = `${count} sorties`;
 
   if (currentView === "tree") {
     recordCount.textContent =
-      `Showing ${count} of ${entries.length} entries`;
+      `Showing ${count} of ${entries.length} sorties`;
   }
 }
 

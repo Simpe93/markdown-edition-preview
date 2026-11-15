@@ -1,418 +1,274 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Entry Explorer</title>
+  <title>Sortie Explorer</title>
 
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="font-awesome-free/css/all.min.css">
 </head>
 
 <body>
-
   <main class="app">
-
     <!-- Header -->
     <header class="app-header">
       <div>
-        <h1 class="app-title">Entry Explorer</h1>
+        <h1 class="app-title">Sortie Explorer</h1>
         <p class="app-subtitle">
-          Browse and explore your entries
+          Browse and explore your sorties
         </p>
       </div>
 
       <div class="header-actions">
-  <div class="record-count" id="headerCount">
-    200 entries
-  </div>
+        <div class="record-count" id="headerCount">
+          200 sorties
+        </div>
 
-  <button
-    class="theme-toggle"
-    id="themeToggle"
-    type="button"
-    aria-label="Switch to dark mode"
-    title="Switch theme"
-  >
-    <span class="theme-icon" id="themeIcon">☾</span>
-    <span id="themeLabel">Dark mode</span>
-  </button>
-</div>
-    </header>
-
-
-    <!-- Toolbar -->
-    <section class="toolbar">
-
-      <div class="toolbar-left">
-
-        <input
-          type="search"
-          id="searchInput"
-          class="search-input"
-          placeholder="Search entries..."
-          autocomplete="off"
-        >
-
-        <button class="btn" id="clearSearch">
-          Clear
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch theme">
+          <span class="theme-icon" id="themeIcon">☾</span>
+          <span id="themeLabel">Dark mode</span>
         </button>
 
-        
-<!-- Column visibility dropdown -->
-<div class="columns-dropdown" id="columnsDropdown">
-
-  <button
-    class="toolbar-btn"
-    id="columnsBtn"
-    type="button"
-    aria-expanded="false"
-  >
-    <span>☷</span>
-    Columns
-    <span class="dropdown-arrow">⌄</span>
-  </button>
-
-  <div class="columns-menu" id="columnsMenu" hidden>
-
-    <div class="columns-menu-header">
-      <span>Visible columns</span>
-      <button type="button" id="resetColumnsBtn">
-        Reset
-      </button>
-    </div>
-
-    <div class="columns-menu-options">
-
-      <label class="column-option">
-        <input type="checkbox" data-column="name" checked>
-        <span>Name</span>
-      </label>
-
-      <label class="column-option">
-        <input type="checkbox" data-column="date" checked>
-        <span>Date</span>
-      </label>
-
-      <label class="column-option">
-        <input type="checkbox" data-column="category" checked>
-        <span>Category</span>
-      </label>
-
-      <label class="column-option">
-        <input type="checkbox" data-column="amount" checked>
-        <span>Amount</span>
-      </label>
-
-      <label class="column-option">
-        <input type="checkbox" data-column="status" checked>
-        <span>Status</span>
-      </label>
-
-      <label class="column-option">
-        <input type="checkbox" data-column="reference" checked>
-        <span>Reference</span>
-      </label>
-
-    </div>
-
-    <div class="columns-menu-footer">
-      Changes are applied immediately
-    </div>
-
-  </div>
-</div>
-
-<!-- Advanced filters dropdown -->
-<div class="filters-dropdown" id="filtersDropdown">
-
-  <button
-    class="toolbar-btn"
-    id="filtersBtn"
-    type="button"
-    aria-expanded="false"
-  >
-    <span>☷</span>
-    Filters
-    <span class="filter-badge" id="filterBadge" hidden>0</span>
-    <span class="dropdown-arrow">⌄</span>
-  </button>
-
-  <div class="filters-menu" id="filtersMenu" hidden>
-
-    <div class="filters-menu-header">
-      <span>Advanced filters</span>
-      <button type="button" id="clearFiltersBtn">
-        Clear all
-      </button>
-    </div>
-
-    <!-- Date range -->
-    <div class="filter-section">
-
-      <div class="filter-section-title">
-        Date range
-      </div>
-
-      <label class="filter-label" for="filterDateFrom">
-        From
-      </label>
-
-      <input
-        type="date"
-        id="filterDateFrom"
-        class="filter-input"
-      >
-
-      <label class="filter-label" for="filterDateTo">
-        To
-      </label>
-
-      <input
-        type="date"
-        id="filterDateTo"
-        class="filter-input"
-      >
-
-    </div>
-
-    <!-- Category -->
-    <div class="filter-section">
-
-      <div class="filter-section-title">
-        Category
-      </div>
-
-      <select id="filterCategory" class="filter-input">
-        <option value="">All categories</option>
-      </select>
-
-    </div>
-
-    <!-- Status -->
-    <div class="filter-section">
-
-      <div class="filter-section-title">
-        Status
-      </div>
-
-      <select id="filterStatus" class="filter-input">
-        <option value="">All statuses</option>
-      </select>
-
-    </div>
-
-    <div class="filters-menu-footer">
-      Filters are applied automatically
-    </div>
-
-  </div>
-</div>
-
-      </div>
-
-
-      <div class="toolbar-right">
-
-        <!-- View toggle -->
-        <div class="view-toggle">
-
-          <button
-            id="tableViewBtn"
-            class="active"
-            type="button"
-          >
-            ☰ Table
+        <!-- Column visibility dropdown -->
+        <div class="columns-dropdown" id="columnsDropdown">
+          <button class="toolbar-btn" id="columnsBtn" type="button" aria-expanded="false">
+            <i class="fas fa-bars"></i>
+            Columns
+            <!--<span class="dropdown-arrow">⌄</span>-->
+            <i class="fas fa-angle-down"></i>
           </button>
 
-          <button
-            id="treeViewBtn"
-            type="button"
-          >
-            ⊞ Tree
-          </button>
+          <div class="columns-menu" id="columnsMenu" hidden>
+            <div class="columns-menu-header">
+              <span>Visible columns</span>
+              <button class="btn" type="button" id="resetColumnsBtn">
+                Reset
+              </button>
+            </div>
 
+            <div class="columns-menu-options">
+              <label class="column-option">
+                <input type="checkbox" data-column="name" checked>
+                <span>Name</span>
+              </label>
+              <label class="column-option">
+                <input type="checkbox" data-column="date" checked>
+                <span>Date</span>
+              </label>
+              <label class="column-option">
+                <input type="checkbox" data-column="category" checked>
+                <span>Category</span>
+              </label>
+              <label class="column-option">
+                <input type="checkbox" data-column="amount" checked>
+                <span>Amount</span>
+              </label>
+              <label class="column-option">
+                <input type="checkbox" data-column="status" checked>
+                <span>Status</span>
+              </label>
+              <label class="column-option">
+                <input type="checkbox" data-column="reference" checked>
+                <span>Reference</span>
+              </label>
+            </div>
+          </div>
         </div>
 
         <!-- Tree controls -->
-        <button
-          class="btn"
-          id="expandAllBtn"
-          type="button"
-        >
+        <button class="btn" id="expandAllBtn" type="button">
           Expand all
         </button>
 
-        <button
-          class="btn"
-          id="collapseAllBtn"
-          type="button"
-        >
+        <button class="btn" id="collapseAllBtn" type="button">
           Collapse all
         </button>
 
         <button class="btn" id="treeSortBtn" type="button">
-  ↓ Newest first
-</button>
+          <i id="treeSortBtnIcon" class="fas fa-long-arrow-alt-down"></i>
+          <span id="treeSortBtnLabel">Newest first</span>
+        </button>
 
-<div class="tree-level-controls" id="treeLevelControls">
-
-  <span class="tree-level-label">Group by:</span>
-
-  <button class="level-btn active" id="monthToggle" type="button">
-    Month
-  </button>
-
-  <button class="level-btn active" id="weekToggle" type="button">
-    Week
-  </button>
-
-</div>
-
+        <div class="tree-level-controls" id="treeLevelControls">
+          <span class="tree-level-label">Group by:</span>
+          <button class="level-btn active" id="monthToggle" type="button">
+            Month
+          </button>
+          <button class="level-btn active" id="weekToggle" type="button">
+            Week
+          </button>
+        </div>
       </div>
+    </header>
 
+    <!-- Toolbar -->
+    <section class="toolbar">
+      <div class="toolbar-left">
+        <input type="search" id="searchInput" class="search-input" placeholder="Search sorties..." autocomplete="off">
+        <button class="btn" id="clearSearch">
+          Clear
+        </button>
+
+        <!-- Advanced filters dropdown -->
+        <div class="filters-dropdown" id="filtersDropdown">
+          <button class="toolbar-btn" id="filtersBtn" type="button" aria-expanded="false">
+            <i class="fas fa-bars"></i>
+            Filters
+            <span class="filter-badge" id="filterBadge" hidden>0</span>
+            <!--<span class="dropdown-arrow">⌄</span>-->
+            <i class="fas fa-angle-down"></i>
+          </button>
+
+          <div class="filters-menu" id="filtersMenu" hidden>
+            <div class="filters-menu-header">
+              <span>Advanced filters</span>
+              <button class="btn" type="button" id="clearFiltersBtn">
+                Clear
+              </button>
+            </div>
+
+            <!-- Date range -->
+            <div class="filter-section">
+              <div class="filter-section-title">
+                Date range
+              </div>
+              <label class="filter-label" for="filterDateFrom">
+                From
+              </label>
+              <input type="date" id="filterDateFrom" class="filter-input">
+              <label class="filter-label" for="filterDateTo">
+                To
+              </label>
+              <input type="date" id="filterDateTo" class="filter-input">
+            </div>
+
+            <!-- Category -->
+            <div class="filter-section">
+              <div class="filter-section-title">
+                Category
+              </div>
+              <div class="select-wrapper" style="width: 100%;">
+                <select id="filterCategory" class="filter-input">
+                  <option value="">All categories</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-section">
+              <div class="filter-section-title">
+                Status
+              </div>
+              <div class="select-wrapper" style="width: 100%;">
+                <select id="filterStatus" class="filter-input">
+                  <option value="">All statuses</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="toolbar-right">
+        <!-- View toggle -->
+        <div class="view-toggle">
+          <button id="tableViewBtn" class="active" type="button"> 
+            <i class="fas fa-bars"></i>
+            Table
+          </button>
+          <button id="treeViewBtn" type="button">
+            <i class="fas fa-sitemap"></i>
+            Tree
+          </button>
+        </div>
+      </div>
     </section>
-
 
     <!-- Data container -->
     <section class="data-container">
-
       <!-- Normal table view -->
       <div id="tableView" class="table-wrapper">
-
         <!-- Active filter pills -->
-<div id="activeFilterPills" class="active-filter-pills" hidden>
-</div>
-
-<!-- Bulk selection toolbar -->
-<div class="bulk-toolbar" id="bulkToolbar" hidden>
-
-  <div class="bulk-selection-info">
-    <span class="selection-count" id="selectionCount">
-      0 selected
-    </span>
-
-    <button
-      type="button"
-      id="clearSelectionBtn"
-      class="bulk-clear-btn"
-    >
-      Clear selection
-    </button>
-  </div>
-
-  <div class="bulk-actions">
-
-    <button
-      type="button"
-      id="exportSelectedBtn"
-      class="bulk-action-btn"
-    >
-      <span>↓</span>
-      Export selected
-    </button>
-
-    <button
-      type="button"
-      id="deleteSelectedBtn"
-      class="bulk-action-btn danger"
-    >
-      <span>×</span>
-      Delete selected
-    </button>
-
-  </div>
-
-</div>
+        <div id="activeFilterPills" class="active-filter-pills" hidden></div>
+        <!-- Bulk selection toolbar -->
+        <div class="bulk-toolbar" id="bulkToolbar" hidden>
+          <div class="bulk-selection-info">
+            <span class="selection-count" id="selectionCount">
+              0 selected
+            </span>
+            <button type="button" id="clearSelectionBtn" class="bulk-clear-btn">
+              Clear selection
+            </button>
+          </div>
+          <div class="bulk-actions">
+            <button type="button" id="exportSelectedBtn" class="bulk-action-btn">
+              Export selected
+            </button>
+            <button type="button" id="deleteSelectedBtn" class="bulk-action-btn danger">
+              <i class="fas fa-times"></i>
+              Delete selected
+            </button>
+          </div>
+        </div>
 
         <table class="data-table">
-
- <thead>
-  <tr>
-    <th class="selection-column">
-      <input
-        type="checkbox"
-        id="selectAllCheckbox"
-        aria-label="Select all entries on this page"
-      >
-    </th>
-
-    <th data-column="name">Name</th>
-    <th data-column="date">Date</th>
-    <th data-column="category">Category</th>
-    <th data-column="amount">Amount</th>
-    <th data-column="status">Status</th>
-    <th data-column="reference">Reference</th>
-  </tr>
-</thead>
-
+          <thead>
+            <tr>
+              <th class="selection-column">
+                <input type="checkbox" id="selectAllCheckbox" aria-label="Select all sorties on this page">
+              </th>
+              <th data-column="name">Name</th>
+              <th data-column="date">Date</th>
+              <th data-column="category">Category</th>
+              <th data-column="amount">Amount</th>
+              <th data-column="status">Status</th>
+              <th data-column="reference">Reference</th>
+            </tr>
+          </thead>
           <tbody id="tableBody">
-            <!-- Generated by JavaScript -->
+            <!-- Generated -->
           </tbody>
-
         </table>
-
       </div>
-
 
       <!-- Tree view -->
-      <div
-        id="treeView"
-        class="tree-view"
-        hidden
-      >
-        <!-- Generated by JavaScript -->
+      <div id="treeView" class="tree-view" hidden>
+        <!-- Generated -->
       </div>
-
 
       <!-- Empty state -->
-      <div
-        id="emptyState"
-        class="empty-state"
-        hidden
-      >
-        <strong>No entries found</strong>
-        Try changing your search.
+      <div id="emptyState" class="empty-state" hidden>
+        <strong>No sorties found</strong>
+        Try changing your search or filters.
       </div>
-
 
       <!-- Footer -->
       <footer class="table-footer">
-
-  <div class="footer-info" id="recordCount">
-    Showing 1–25 of 200 entries
-  </div>
-
-  <div class="footer-controls" id="paginationControls">
-
-    <div class="page-size-control">
-      <label for="pageSizeSelect">Rows per page</label>
-
-      <select id="pageSizeSelect">
-        <option value="10">10</option>
-        <option value="25" selected>25</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-        <option value="200">200</option>
-      </select>
-    </div>
-
-    <div class="pagination" id="pagination">
-      <!-- Generated by JavaScript -->
-    </div>
-
-  </div>
-
-</footer>
-
+        <div class="footer-info" id="recordCount">
+          Showing 1-25 of 200 sorties
+        </div>
+        <div class="footer-controls" id="paginationControls">
+          <div class="page-size-control">
+            <label for="pageSizeSelect">Rows per page</label>
+            <div class="select-wrapper">
+              <select id="pageSizeSelect">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+              </select>
+            </div>
+          </div>
+          <div class="pagination" id="pagination">
+            <!-- Generated -->
+          </div>
+        </div>
+      </footer>
     </section>
-
   </main>
-
-
-  <!-- Application logic -->
   <script src="app.js"></script>
-
 </body>
 </html>

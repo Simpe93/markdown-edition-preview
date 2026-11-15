@@ -29,6 +29,8 @@
 
   --transition: 0.22s ease;
 
+  --tree-indent: 78px;
+
   font-family:
     Inter, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
@@ -189,7 +191,7 @@ body,
 ======================================== */
 
 .theme-toggle {
-  display: inline-flex;
+  display: none;
   align-items: center;
   justify-content: center;
   gap: 9px;
@@ -336,7 +338,7 @@ body,
 }
 
 .view-toggle button.active {
-  background: var(--surface);
+  background: rgb(72 72 72);
   color: var(--primary);
   box-shadow: var(--shadow);
 }
@@ -515,12 +517,16 @@ body,
 ======================================== */
 
 .tree-view {
-  padding: 16px 8px;
+  padding: 8px 8px 0px 8px;
 }
 
 .tree-group {
   width: 100%;
-  margin-bottom: 3px;
+  margin-bottom: 8px;
+}
+
+.tree-group:last-child {
+  margin-bottom: 0px;
 }
 
 .tree-heading {
@@ -537,7 +543,7 @@ body,
   user-select: none;
 }
 
-.tree-heading .chevron {
+.tree-heading i {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -545,11 +551,11 @@ body,
   width: 18px;
 
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 18px;
   transition: transform 0.18s ease;
 }
 
-.tree-group.collapsed > .tree-heading .chevron {
+.tree-group.collapsed > .tree-heading i {
   transform: rotate(-90deg);
 }
 
@@ -589,7 +595,7 @@ body,
 /* Month */
 
 .tree-heading.month {
-  padding-left: 44px;
+  padding-left: 34px;
 
   background: #f3f4f8;
   color: var(--month-color);
@@ -600,7 +606,7 @@ body,
 /* Week */
 
 .tree-heading.week {
-  padding-left: 70px;
+  padding-left: 50px;
 
   background: #f8f9fb;
   color: var(--week-color);
@@ -615,7 +621,7 @@ body,
 /* Year */
 
 :root[data-theme="dark"] .tree-heading.year {
-  background: #3c3c3c;
+  background: #585757;
   color: #226ede;
 }
 
@@ -629,7 +635,7 @@ body,
 /* Week */
 
 :root[data-theme="dark"] .tree-heading.week {
-  background: #585757;
+  background: #3c3c3c;
   color: #ea8c18;
 }
 
@@ -684,6 +690,7 @@ body,
 
 .tree-content {
   overflow: hidden;
+  margin-top: 8px;
 }
 
 .tree-group.collapsed > .tree-content {
@@ -696,7 +703,7 @@ body,
 ======================================== */
 
 .tree-entries {
-  padding: 4px 0 8px 98px;
+  padding: 4px 0 8px var(--tree-indent);
 }
 
 .tree-entry {
@@ -713,7 +720,7 @@ body,
   padding: 7px 18px;
 
   background: transparent !important;
-  border-bottom: 1px solid var(--border);
+  /*border-bottom: 1px solid var(--border);*/
 
   border-radius: 6px;
   font-size: 12px;
@@ -766,6 +773,7 @@ body,
 .record-count {
   color: var(--text-muted);
   font-size: 12px;
+  display: none;
 }
 
 .footer-controls {
@@ -865,31 +873,11 @@ body,
   background: var(--surface);
   color: var(--text-muted);
 
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
 
   transition: all 0.15s ease;
 }
-
-.pagination button:hover:not(:disabled):not(.active) {
-  background: var(--surface-hover);
-  border-color: var(--primary);
-  color: var(--primary);
-}
-
-.pagination button.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #ffffff;
-
-  box-shadow: 0 2px 6px rgba(102, 88, 232, 0.2);
-}
-
-.pagination button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
 
 /* ========================================
    18. EMPTY STATE
@@ -1025,7 +1013,7 @@ body,
 
 .columns-menu-header button {
   border: none;
-  background: transparent;
+  background: rgb(72 72 72);
   color: var(--primary);
   font-size: 11px;
   font-weight: 600;
@@ -1110,7 +1098,7 @@ body,
 
 .filters-menu-header button {
   border: none;
-  background: transparent;
+  background: rgb(72 72 72);
   color: var(--primary);
   font-size: 11px;
   font-weight: 600;
@@ -1118,7 +1106,6 @@ body,
 
 .filter-section {
   padding: 12px 10px;
-  border-bottom: 1px solid var(--border);
 }
 
 .filter-section-title {
@@ -1349,10 +1336,24 @@ body,
 }
 
 .bulk-clear-btn {
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  height: 33px;
+  padding: 0 11px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--surface);
+  color: var(--text);
+
   font-size: 11px;
+  font-weight: 600;
+
+  transition: all 0.15s ease;
 }
 
 .bulk-clear-btn:hover {
@@ -1445,6 +1446,7 @@ body,
 
   .theme-toggle {
     min-height: 36px;
+    display: none;
   }
 
   /* Toolbar */
@@ -1543,26 +1545,36 @@ body,
 /* Tree */
 
 :root[data-theme="dark"] .tree-heading.year {
-  background: rgba(49, 51, 56, 1);
+  background: rgba(30, 31, 34, 1);
   color: #226ede;
 }
 
 :root[data-theme="dark"] .tree-heading.month {
-  background: rgba(43, 45, 49, 1);
+  background: rgba(56, 58, 64, 1); /*rgba(43, 45, 49, 1);*/
   color: #429842;
 }
 
 :root[data-theme="dark"] .tree-heading.week {
-  background: rgba(30, 31, 34, 1);
+  background: rgba(49, 51, 56, 1);
   color: #ea8c18;
 }
 
 /* Tree hover */
 
-:root[data-theme="dark"] .tree-heading.year:hover,
-:root[data-theme="dark"] .tree-heading.month:hover,
-:root[data-theme="dark"] .tree-heading.week:hover {
+:root[data-theme="dark"] .tree-heading.year:hover {
+  background: rgba(30, 31, 34, 1);
+  border: 1px solid #ea8c18;
+}
+
+:root[data-theme="dark"] .tree-heading.month:hover {
   background: rgba(56, 58, 64, 1);
+  border: 1px solid #ea8c18;
+}
+
+:root[data-theme="dark"] .tree-heading.week:hover {
+  /* background: rgba(56, 58, 64, 1);*/
+  background: rgba(49, 51, 56, 1);
+  border: 1px solid #ea8c18;
 }
 
 /* Tree entries */
@@ -1572,7 +1584,7 @@ body,
 }
 
 :root[data-theme="dark"] .tree-entry:hover {
-  background: rgba(56, 58, 64, 1) !important;
+  /*background: rgba(56, 58, 64, 1) !important;*/
 }
 
 /* Dropdowns */
@@ -1588,7 +1600,7 @@ body,
 :root[data-theme="dark"] .filter-input,
 :root[data-theme="dark"] .page-size-control select,
 :root[data-theme="dark"] .search-input {
-  background: rgba(30, 31, 34, 1);
+  background: rgb(49 51 56);
   color: #f2f2f3;
   border-color: rgba(56, 58, 64, 1);
 }
@@ -1700,13 +1712,64 @@ body,
 :root[data-theme="dark"] .btn:hover,
 :root[data-theme="dark"] .toolbar-btn:hover,
 :root[data-theme="dark"] .level-btn:hover,
-:root[data-theme="dark"] .pagination button:hover:not(:disabled) {
+:root[data-theme="dark"] .pagination button:hover:not(:disabled):not(.active) {
   border-color: #ea8c18;
   color: #ea8c18;
+}
+
+.pagination button:hover:not(:disabled):not(.active) {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.pagination button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+
+  box-shadow: 0 2px 6px rgba(102, 88, 232, 0.2);
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 /* Theme toggle */
 
 :root[data-theme="dark"] .theme-icon {
   color: #ea8c18;
+}
+
+.select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.select-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+
+    padding: 0px 40px 0px 12px;
+    cursor: pointer;
+}
+
+.select-wrapper::after {
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat center;
+    background-size: contain;
+
+    pointer-events: none;
+}
+
+.btn-clear {
+  background-color: rgb(72 72 72);
 }
